@@ -182,7 +182,7 @@ def get_lst(prodid):
 def search(query, numres=1000):
     # search for data products
 
-    for i in range(300, numres, 100):
+    for i in range(1000, 9000, 100):
         print ('## i:', i)
         res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
         #print (res)
@@ -207,6 +207,8 @@ def tdo(idxid):
         print ("EXCEPTION: ", repr(e))
 
 pool.map(tdo, ids)
+
+pool.close()
 pool.join()
 
 
