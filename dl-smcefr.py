@@ -13,10 +13,15 @@ Run `pip3 install requirements.txt`
 @author: Cade Brown <me@cade.site>
 """
 
+import imp
 import json
+import multiprocessing
 import sys
 import io
-
+import os
+from getpass import getpass
+import time
+from threading import Lock
 import requests
 import tempfile
 
@@ -34,7 +39,11 @@ API_ROOT = 'https://scihub.copernicus.eu/dhus/odata/v1'
 
 # username/password
 API_USER = sys.argv[1]
-API_PASS = input(f"password for '{API_USER}': ")
+#API_PASS = input(f"password for '{API_USER}': ")
+API_PASS = getpass(f"password for '{API_USER}': ")
+
+# for API/internet access
+API_LOCK = Lock()
 
 # HTTP session
 sess = requests.Session()
@@ -43,12 +52,15 @@ sess.auth = (API_USER, API_PASS)
 ### UTILITIES ###
 
 def GET(url):
-    res = sess.get(url)
-    if not res.ok:
-        print ('  GET FAILED:', url)
-        print('dump: ', res.text)
-        raise Exception(repr(res))
-    return res
+    with API_LOCK:
+        res = sess.get(url)
+        if not res.ok:
+            print ('  GET FAILED:', url)
+            print('dump: ', res.text)
+            raise Exception(repr(res))
+
+        return res
+
 
 def NC(data):
     # convert binary data to netCDF4 dataset
@@ -67,6 +79,10 @@ def do_efr(prodid):
 
     prodname = GET(f"{API_ROOT}/Products('{prodid}')/Name/$value").text
     print (f'  name: {prodname}')
+    output = f"./data/{prodname}.png"
+
+    if os.path.exists(output):
+        print ('  ALREADY EXISTS')
 
     # download neccessary data
     #nc14 = NC(GET(f"{API_ROOT}/Products('{prodid}')/Nodes('{prodname}.SEN3')/Nodes('Oa14_radiance.nc')/$value").content)
@@ -111,11 +127,8 @@ def do_efr(prodid):
         return
 
     # otherwise, output the image
-    output = f"{prodname}.png"
     Image.fromarray((np.clip(pix, 0, 1) * 255).astype(np.uint8)).save(output)
     print (f"  output: {output}")
-
-
 
 
 
@@ -164,23 +177,42 @@ def get_lst(prodid):
 
 """
 
+
+
 def search(query, numres=1000):
     # search for data products
 
-    for i in range(0, numres, 100):
-
+    for i in range(300, numres, 100):
+        print ('## i:', i)
         res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
         #print (res)
         
         data = json.loads(res)['feed']['entry']
 
-        for x in data:
-            yield (x['id'])
+        for (j, x) in enumerate(data):
+            yield (i + j, x['id'])
+            
+import multiprocessing
+from multiprocessing.pool import ThreadPool
+
+ids = list(search('ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-03-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'))
+
+pool = ThreadPool(32)
+def tdo(idxid):
+    (idx, id) = idxid
+    try:
+        print("IDX: ", idx, "ID: ", id)
+        do_efr(id)
+    except Exception as e:
+        print ("EXCEPTION: ", repr(e))
+
+pool.map(tdo, ids)
+pool.join()
 
 
-for id in search('ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-03-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'):
 
-    do_efr(id)
+#for id in ids:
+#    do_efr(id)
 
 
 """
