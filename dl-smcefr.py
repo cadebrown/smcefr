@@ -17,6 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 import imp
 import json
 import multiprocessing
+from multiprocessing.connection import wait
 import sys
 import io
 import os
@@ -91,6 +92,10 @@ def do_efr(prodid):
     nc6 = NC(GET(f"{API_ROOT}/Products('{prodid}')/Nodes('{prodname}.SEN3')/Nodes('Oa06_radiance.nc')/$value").content)
     nc4 = NC(GET(f"{API_ROOT}/Products('{prodid}')/Nodes('{prodname}.SEN3')/Nodes('Oa04_radiance.nc')/$value").content)
 
+
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products('83f3069f-4b25-49f0-8137-511a7453e8f6')/Nodes('S3A_OL_1_EFR____20211230T134025_20211230T134325_20211231T184123_0179_080_181_2700_LN1_O_NT_002.SEN3')/Nodes('Oa08_radiance.nc')"
+
+
     """
     var band1 = brightness * (stretch(B09, 0, 0.25)-0.1*stretch(B14, 0, 0.1));
     var band2 = brightness * (1.1*stretch(B06, 0, 0.25)-0.1* stretch(B14, 0, 0.1));
@@ -148,11 +153,15 @@ def mainloop(query, numres=1000):
             res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
             
             print (f"  success: {i} to {i+100}")
+
+            futs = []
+
             try:
                 data = json.loads(res)['feed']['entry']
+
                 for x in data:
                     # actually do logic here
-                    executor.submit(perid, x['id'])
+                    futs.append(executor.submit(perid, x['id']))
                     #perid(x['id'])
 
 
@@ -162,6 +171,8 @@ def mainloop(query, numres=1000):
             except Exception as e:
                 print ("EXCEPTION: ", repr(e))
                 print ("  response: ", res)
+
+            wait(futs, timeout=30)
 
 
 mainloop('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-82.81167009725682 -55.31132818032862,-35.69468538674864 -55.31132818032862,-35.69468538674864 10.646602960492118,-82.81167009725682 10.646602960492118,-82.81167009725682 -55.31132818032862)))" )')
