@@ -13,6 +13,7 @@ Run `pip3 install requirements.txt`
 @author: Cade Brown <me@cade.site>
 """
 
+from concurrent.futures import ThreadPoolExecutor
 import imp
 import json
 import multiprocessing
@@ -43,7 +44,7 @@ API_USER = sys.argv[1]
 API_PASS = getpass(f"password for '{API_USER}': ")
 
 # for API/internet access
-API_LOCK = Lock()
+#API_LOCK = Lock()
 
 # HTTP session
 sess = requests.Session()
@@ -52,15 +53,13 @@ sess.auth = (API_USER, API_PASS)
 ### UTILITIES ###
 
 def GET(url):
-    with API_LOCK:
-        res = sess.get(url)
-        time.sleep(0.1) # no DDOSing...
-        if not res.ok:
-            print ('  GET FAILED:', url)
-            print('dump: ', res.text)
-            raise Exception(repr(res))
+    res = sess.get(url)
+    if not res.ok:
+        print (f'FAILED: GET {url}')
+        print('  dump: ', res.content)
+        raise Exception(repr(res))
 
-        return res
+    return res
 
 
 def NC(data):
@@ -133,6 +132,75 @@ def do_efr(prodid):
 
 
 
+def mainloop(query, numres=1000):
+    # search for data products
+
+    def perid(id):
+        # utility function
+        try:
+            do_efr(id)
+        except Exception as e:
+            print ("EXCEPTION: ", repr(e))
+
+    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        for i in range(0, 1000, 100):
+            print (f"requesting results {i} to {i+100}...")
+            res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
+            
+            print (f"  success: {i} to {i+100}")
+            try:
+                data = json.loads(res)['feed']['entry']
+                for x in data:
+                    # actually do logic here
+                    executor.submit(perid, x['id'])
+                    #perid(x['id'])
+
+
+                    #pool.apply
+                    #fn(x['id'])
+                    #yield (i + j, x['id'])
+            except Exception as e:
+                print ("EXCEPTION: ", repr(e))
+                print ("  response: ", res)
+
+
+mainloop('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-82.81167009725682 -55.31132818032862,-35.69468538674864 -55.31132818032862,-35.69468538674864 10.646602960492118,-82.81167009725682 10.646602960492118,-82.81167009725682 -55.31132818032862)))" )')
+
+"""
+Queries:
+
+pretty good, NA region:
+'ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'
+
+"""
+
+
+
+
+"""
+
+for id in search():
+
+    pool.apply_async(tdo, (id,))
+
+#pool.map(tdo, ids)
+
+pool.close()
+pool.join()
+
+"""
+
+
+#for id in ids:
+#    do_efr(id)
+
+
+"""
+wget --no-check-certificate --user=X --password=Y "https://scihub.copernicus.eu/dhus/search?q=ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-03-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___&rows=100&start=0&format=json" -O -> res.csv
+"""
+
+
+
 """
 
 
@@ -177,59 +245,3 @@ def get_lst(prodid):
 
 
 """
-
-
-
-def search(query, numres=1000):
-    # search for data products
-
-    for i in range(0, 500, 100):
-        print ('## i:', i)
-        if i > 0:
-            time.sleep(100.0)
-        res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
-        #print (res)
-        
-        try:
-            data = json.loads(res)['feed']['entry']
-            for (j, x) in enumerate(data):
-                #fn(x['id'])
-                yield (i + j, x['id'])
-        except Exception as e:
-            print ("BAD RESPONSE: ", res)
-            print ("EXC: ", repr(e))
-
-
-import multiprocessing
-from multiprocessing.pool import ThreadPool
-
-def tdo(idxid):
-    (idx, id) = idxid
-    try:
-        print("IDX: ", idx, "ID: ", id)
-        do_efr(id)
-    except Exception as e:
-        print ("EXCEPTION: ", repr(e))
-
-
-pool = ThreadPool(8)
-
-for id in search('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'):
-
-    pool.apply_async(tdo, (id,))
-
-#pool.map(tdo, ids)
-
-pool.close()
-pool.join()
-
-
-
-#for id in ids:
-#    do_efr(id)
-
-
-"""
-wget --no-check-certificate --user=X --password=Y "https://scihub.copernicus.eu/dhus/search?q=ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-03-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___&rows=100&start=0&format=json" -O -> res.csv
-"""
-
