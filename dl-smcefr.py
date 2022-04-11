@@ -54,6 +54,7 @@ sess.auth = (API_USER, API_PASS)
 def GET(url):
     with API_LOCK:
         res = sess.get(url)
+        time.sleep(0.1) # no DDOSing...
         if not res.ok:
             print ('  GET FAILED:', url)
             print('dump: ', res.text)
@@ -182,22 +183,26 @@ def get_lst(prodid):
 def search(query, numres=1000):
     # search for data products
 
-    for i in range(1000, 9000, 100):
+    for i in range(0, 500, 100):
         print ('## i:', i)
+        if i > 0:
+            time.sleep(100.0)
         res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
         #print (res)
         
-        data = json.loads(res)['feed']['entry']
+        try:
+            data = json.loads(res)['feed']['entry']
+            for (j, x) in enumerate(data):
+                #fn(x['id'])
+                yield (i + j, x['id'])
+        except Exception as e:
+            print ("BAD RESPONSE: ", res)
+            print ("EXC: ", repr(e))
 
-        for (j, x) in enumerate(data):
-            yield (i + j, x['id'])
-            
+
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 
-ids = list(search('ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-03-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'))
-
-pool = ThreadPool(32)
 def tdo(idxid):
     (idx, id) = idxid
     try:
@@ -206,7 +211,14 @@ def tdo(idxid):
     except Exception as e:
         print ("EXCEPTION: ", repr(e))
 
-pool.map(tdo, ids)
+
+pool = ThreadPool(8)
+
+for id in search('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-126.21640752754321 13.855272652456605,-61.96597383139563 13.855272652456605,-61.96597383139563 49.48536580184964,-126.21640752754321 49.48536580184964,-126.21640752754321 13.855272652456605)))" )'):
+
+    pool.apply_async(tdo, (id,))
+
+#pool.map(tdo, ids)
 
 pool.close()
 pool.join()
