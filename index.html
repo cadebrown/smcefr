@@ -22,7 +22,8 @@
 <p class="author">Cade Brown <a href="mailto:cade@utk.edu" class="email">cade@utk.edu</a></p>
 <p class="author">Piotr Luszczek</p>
 </header>
-<p>Please check out the source on GitHub <a href="https://github.com/cadebrown/smcefr" class="uri">https://github.com/cadebrown/smcefr</a>!</p>
+<p>Check out the source on GitHub: <a href="https://github.com/cadebrown/smcefr" class="uri">https://github.com/cadebrown/smcefr</a></p>
+<p>Link to downloads: <a href="https://github.com/cadebrown/smcefr/releases" class="uri">https://github.com/cadebrown/smcefr/releases</a></p>
 <h1 id="introduction">Introduction</h1>
 <figure>
 <img src="https://cade.site/files/smcefr/miniset.jpg" id="smcefr-18" alt="" /><figcaption>Figure 1: A sample of 18 images from the <code>smcefr-mini</code> dataset</figcaption>
@@ -53,10 +54,11 @@
 <img src="https://cade.site/files/smcefr/filename.png" id="sen3-fname" alt="" /><figcaption>Figure 2: Sentinel-3 Generic Filename Schema Image</figcaption>
 </figure>
 <h2 id="accessing-dataset">Accessing Dataset</h2>
-<p>Our dataset is available for download on GitHub <a href="#R1">[1]</a>. The dowload is compact: it is a single Tar file compressed with Gzip (<a href="smcefr-mini.tar.gz">smcefr-mini.tar.gz</a>). The location of the file is <a href="https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz">github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz</a> and it can be expanded with the command:</p>
-<pre class="shell"><code>$ tar -xvf smcefr-mini.tar.gz</code></pre>
+<p>Our dataset is available for download on GitHub <a href="#R1">[1]</a>. The dowload is compact: it is a single Tar file compressed with Gzip (<a href="https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view">smcefr-full.tar.gz</a>). The location of the file is <a href="https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view">https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view</a> and it can be expanded with the command:</p>
+<pre class="shell"><code>$ tar -xvf smcefr-full.tar.gz</code></pre>
 <p>which will create a directory that contains all the PNG files we selected. These can then be easily read with the OpenCV library, Python’s Pillow, Tensorflow, and many other media frameworks.</p>
 <p>Additionally, the source code and implementations for the dataset reduction mentioned above can be found on GitHub <a href="#R1">[1]</a>.</p>
+<p>There is also a smaller version: (<a href="smcefr-mini.tar.gz">smcefr-mini.tar.gz</a>). The location of the file is <a href="https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz">github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz</a> and it can be expanded with the command:</p>
 <h2 id="reporting-problems">Reporting Problems</h2>
 <p>If any errors arise during the usage of the dataset, an issue can be filed on the GitHub page <a href="#R1">[1]</a>, or by directly contacting the authors of this paper: corresponding author is Cade Brown, .</p>
 <h1 id="challenge-questions">Challenge Questions</h1>
@@ -84,7 +86,8 @@
 </ul>
 <h1 id="references">References</h1>
 <p><a name="R1">[1]</a> Cade Brown: <em>SMCEFR: Sentinel-3 Satellite Dataset</em> <a href="https://github.com/cadebrown/smcefr" class="uri">https://github.com/cadebrown/smcefr</a></p>
-<p>GitHub: Dataset Download: <code>smcefr-mini</code>(1GB) <a href="https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz" class="uri">https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz</a>.</p>
+<p>Google Drive: Dataset Download <code>smcefr-full</code> (2.6GB) <a href="https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view" class="uri">https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view</a>.</p>
+<p>GitHub: Dataset Download: <code>smcefr-mini</code>(1GB) <a href="https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz" class="uri">https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz</a>.</p>
 <p><a name="R2">[2]</a> Copernicus Open Access Hub, <a href="https://scihub.copernicus.eu/" class="uri">https://scihub.copernicus.eu/</a>.</p>
 <p><a name="R3">[3]</a> Sentinel-3 OLCI EFR Data Product Description, <a href="https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-3-olci/level-1/fr-or-rr-toa-radiances" class="uri">https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-3-olci/level-1/fr-or-rr-toa-radiances</a>.</p>
 <p><a name="R4">[4]</a> Olaf Ronneberger, Philipp Fischer, Thomas Brox: <em>U-Net: Convolutional Networks for Biomedical Image Segmentation.</em> MICCAI Springer, LNCS, Vol.9351: 234–241, 2015. <a href="https://arxiv.org/pdf/1505.04597.pdf" class="uri">https://arxiv.org/pdf/1505.04597.pdf</a></p>
