@@ -117,10 +117,9 @@ Accessing Dataset
 -----------------
 
 Our dataset is available for download on GitHub [[1]](#R1). The dowload is compact: it is a single Tar file compressed with Gzip
-([smcefr-full.tar.gz](smcefr-full.tar.gz)). The location of the file is
-[github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz](https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz)
+([smcefr-full.tar.gz](https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view)). The location of the file is
+[https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view](https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view)
 and it can be expanded with the command: 
-
 
 ```shell
 $ tar -xvf smcefr-full.tar.gz
@@ -132,6 +131,11 @@ Python's Pillow, Tensorflow, and many other media frameworks.
 
 Additionally, the source code and implementations for the dataset
 reduction mentioned above can be found on GitHub [[1]](#R1).
+
+There is also a smaller version:
+([smcefr-mini.tar.gz](smcefr-mini.tar.gz)). The location of the file is
+[github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz](https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz)
+and it can be expanded with the command: 
 
 Reporting Problems
 ------------------
@@ -227,7 +231,10 @@ References
 <a name="R1">[1]</a> Cade Brown: *SMCEFR: Sentinel-3 Satellite Dataset*
 <https://github.com/cadebrown/smcefr>
 
-GitHub: Dataset Download: `smcefr-full`(1GB)
+Google Drive: Dataset Download `smcefr-full` (2.6GB)
+<https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view>.
+
+GitHub: Dataset Download: `smcefr-mini`(1GB)
 <https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz>.
 
 <a name="R2">[2]</a> Copernicus Open Access Hub, <https://scihub.copernicus.eu/>.
