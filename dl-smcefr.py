@@ -14,7 +14,6 @@ Run `pip3 install requirements.txt`
 """
 
 from concurrent.futures import ThreadPoolExecutor
-import imp
 import json
 import multiprocessing
 from multiprocessing.connection import wait
@@ -59,6 +58,9 @@ def GET(url):
         print (f'FAILED: GET {url}')
         print('  dump: ', res.content)
         raise Exception(repr(res))
+
+    # maximum of 2 req/sec
+    time.sleep(0.5)
 
     return res
 
@@ -147,7 +149,7 @@ def mainloop(query, numres=1000):
         except Exception as e:
             print ("EXCEPTION: ", repr(e))
 
-    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         for i in range(0, 1000, 100):
             print (f"requesting results {i} to {i+100}...")
             res = GET(f"https://scihub.copernicus.eu/dhus/search?q={query}&rows=100&start={i}&format=json").text
@@ -174,8 +176,17 @@ def mainloop(query, numres=1000):
 
             wait(futs, timeout=30)
 
+#mainloop('ingestiondate:[2021-01-01T00:00:00.000Z TO 2021-06-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___')
 
-mainloop('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-82.81167009725682 -55.31132818032862,-35.69468538674864 -55.31132818032862,-35.69468538674864 10.646602960492118,-82.81167009725682 10.646602960492118,-82.81167009725682 -55.31132818032862)))" )')
+
+#mainloop('ingestiondate:[2022-04-01T00:00:00.000Z TO 2022-08-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___')
+#mainloop('ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-04-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___')
+mainloop('ingestiondate:[2022-01-01T00:00:00.000Z TO 2022-04-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___')
+
+
+
+
+#mainloop('ingestiondate:[2021-06-01T00:00:00.000Z TO 2022-01-01T00:00:00.000Z] AND platformname:Sentinel-3 AND producttype:OL_1_EFR___ AND ( footprint:"Intersects(POLYGON((-82.81167009725682 -55.31132818032862,-35.69468538674864 -55.31132818032862,-35.69468538674864 10.646602960492118,-82.81167009725682 10.646602960492118,-82.81167009725682 -55.31132818032862)))" )')
 
 """
 Queries:

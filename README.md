@@ -15,6 +15,8 @@ See the file `./dl-smcefr.py` for technical specs. The basic idea is to download
 
 ## Download Data
 
+The full data is available here (`smcefr-full.tar.gz`), on Google Drive: [https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view](https://drive.google.com/file/d/1HHSqd7LYi1npEqHD_frCgOSGa5VrvALy/view)
+
 Navigate to the [GitHub releases](https://github.com/cadebrown/smcefr/releases), and download `smcefr-mini.tar.gz`
 
 Then, you can expand the tar file, and have a directory of the PNG image dataset

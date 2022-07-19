@@ -5,7 +5,9 @@ author:
 title: 'SMCEFR: Sentinel-3 Satellite Dataset'
 ---
 
-Please check out the source on GitHub <https://github.com/cadebrown/smcefr>!
+Check out the source on GitHub: <https://github.com/cadebrown/smcefr>
+
+Link to downloads: <https://github.com/cadebrown/smcefr/releases>
 
 Introduction
 ============
@@ -114,15 +116,14 @@ during training.
 Accessing Dataset
 -----------------
 
-Our dataset is available for download on GitHub [[1]](#R1). The
-dowload is compact: it is a single Tar file compressed with Gzip
-([smcefr-mini.tar.gz](smcefr-mini.tar.gz)). The location of the file is
-[github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz](https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz)
+Our dataset is available for download on GitHub [[1]](#R1). The dowload is compact: it is a single Tar file compressed with Gzip
+([smcefr-full.tar.gz](smcefr-full.tar.gz)). The location of the file is
+[github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz](https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz)
 and it can be expanded with the command: 
 
 
 ```shell
-$ tar -xvf smcefr-mini.tar.gz
+$ tar -xvf smcefr-full.tar.gz
 ```
 
 which will create a directory that contains all the PNG files we
@@ -226,8 +227,8 @@ References
 <a name="R1">[1]</a> Cade Brown: *SMCEFR: Sentinel-3 Satellite Dataset*
 <https://github.com/cadebrown/smcefr>
 
-GitHub: Dataset Download: `smcefr-mini`(1GB)
-<https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-mini.tar.gz>.
+GitHub: Dataset Download: `smcefr-full`(1GB)
+<https://github.com/cadebrown/smcefr/releases/download/v1.0.0/smcefr-full.tar.gz>.
 
 <a name="R2">[2]</a> Copernicus Open Access Hub, <https://scihub.copernicus.eu/>.
 
